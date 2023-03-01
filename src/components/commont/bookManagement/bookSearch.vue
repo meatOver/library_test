@@ -1,22 +1,64 @@
 <template>
   <div>
-    <search-input></search-input>
+      <search-input></search-input>
     <!--图书列表区-->
+    <div style="top: -50px;position: relative;width: 20px;left: 800px">
+      <el-button @click="dialogVisible = true">增加书籍</el-button>
+      <el-dialog
+          title="增加书籍"
+          :visible.sync="dialogVisible"
+          width="30%"
+          :before-close="handleClose">
+          <span>
+            <div>
+              <el-input v-model="book.name" style="width: 350px;">
+                  <template slot="prepend">书籍名称:</template>
+              </el-input>
+              <el-input v-model="book.id" style="width: 350px;top: 5px">
+                  <template slot="prepend">图书id&nbsp;&nbsp;&nbsp;:</template>
+              </el-input>
+              <el-input v-model="book.author" style="width: 350px;top: 10px">
+                  <template slot="prepend">图书作者:</template>
+              </el-input>
+              <el-input v-model="book.publish" style="width: 350px;top: 15px">
+                  <template slot="prepend">出版社&nbsp;&nbsp;&nbsp;:</template>
+              </el-input>
+              <el-input v-model="book.amount" style="width: 350px;top: 20px">
+                  <template slot="prepend">书籍库存:</template>
+              </el-input>
+
+              </div>
+            </span>
+            <span slot="footer" class="dialog-footer">
+                  <form>
+                        <el-button @click="dialogVisible = false">取 消</el-button>
+                        <el-button type="submit" @click="submit">添加书籍</el-button>
+                  </form>
+          </span>
+      </el-dialog>
+    </div>
     <el-table :data="tableData" style="width: 70%;position: relative;left: 265px" border stripe>
-      <el-table-column type="index"></el-table-column>
-      <el-table-column prop="bookName" label="书籍名称">
+      <!--      <el-table-column type="index"></el-table-column>-->
+
+      <el-table-column prop="id" label="图书id">
       </el-table-column>
-      <el-table-column prop="bookId" label="图书id">
+      <el-table-column prop="name" label="书籍名称">
       </el-table-column>
-      <el-table-column prop="authorName" label="图书作者">
+      <el-table-column prop="author" label="图书作者">
       </el-table-column>
-      <el-table-column prop="bookType" label="图书类型">
+      <el-table-column prop="publisher" label="出版社">
       </el-table-column>
-      <el-table-column prop="borrowedNumber" label="借出数量">
+      <el-table-column prop="borrowedAmount" label="借出数量">
       </el-table-column>
-      <el-table-column prop="remainingNumber" label="图书库存">
+      <el-table-column prop="amount" label="图书库存">
       </el-table-column>
-      <el-table-column prop="bookStatus" label="图书状态">
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button
+              size="mini"
+              type="danger"
+              @click="handleDelete(scope.row.id)">删除</el-button>
+        </template>
       </el-table-column>
     </el-table>
 
@@ -43,18 +85,49 @@ export default {
   components: {
     searchInput,
   },
+  inject:['reload'], // 删除后刷新
   data() {
     return {
+      dialogVisible: false,
       total: 0,
       pageSizes: 5,
       // 默认显示几条
       pageSize: 10,
       currentPage: 1,
-      tableData: []
+      tableData: [],
+
+      // 添加书籍
+      book: {
+        name: '',
+        author: '',
+        id: '',
+        publish: '',
+        amount: ''
+      }
     }
   },
   methods: {
-
+    handleDelete(id) {
+      this.$confirm('此操作将下线该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        console.log(id);
+        this.$axios.delete('/api/book/' + id).then(result => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });this.reload()   // 删除数据后刷新网页
+        } ).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      })
+    },
     // // 分页操作
     // handleCurrentChange(val) {
     //   this.currentPage = val; //val可以获取当前用户选择的页码数
@@ -77,6 +150,16 @@ export default {
     //     }
     //   })
     // },
+    // 关闭窗口
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {
+          });
+    },
+
     handleSizeChange(newSize) {
       console.log(newSize);
       this.pageSize = newSize;//重新指定每页数据量
@@ -99,7 +182,12 @@ export default {
       this.total = res.data.total;
       this.pageSize = res.data.records.pages;
     },
-    //监听 pagesize 改变的事件
+    // 增加书籍方法
+    submit() {
+      this.$axios.post('/api/book/add').then(res => {
+        console.log(res);
+      })
+    }
 
   },
   // 计算属性

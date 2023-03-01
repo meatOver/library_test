@@ -6,23 +6,22 @@
       <el-table
           :data="realData" stripe>
         <el-table-column
-            prop="studentId"
-            label="上线时间">
+            prop="id"
+            label="id">
         </el-table-column>
         <el-table-column
-            prop="studentName"
-            label="在线时长">
+            prop="name"
+            label="姓名">
         </el-table-column>
         <el-table-column
-            prop="studentClass"
+            prop="grade"
             label="班级">
         </el-table-column>
         <el-table-column
-            prop="studentPhone"
-            label="联系方式">
+            prop="major"
+            label="专业">
         </el-table-column>
         <el-table-column
-            prop="studentPhone"
             label="操作">
           <template slot-scope="scope">
             <el-dialog>
@@ -34,7 +33,7 @@
             <el-button
                 size="mini"
                 type="danger"
-                @click="handleDelete(scope.row.studentId)">下线   <!--scope.row获取本行数据-->
+                @click="handleDelete(scope.row.id)">下线   <!--scope.row获取本行数据-->
             </el-button>
           </template>
         </el-table-column>
@@ -99,7 +98,7 @@ export default {
         type: 'warning',
         center: true
       }).then(() => {
-        this.$axios.delete('api/student/delete?id=' + id).then(result => {
+        this.$axios.delete('api/user/' + id).then(result => {
           this.$message({
             type: 'success',
             message: '下线成功!'
@@ -114,15 +113,15 @@ export default {
     },
 
     async getUsersList() {
-      const {data: res} = await this.$axios.get("/api/student/all?page=" + this.currentPage + "&pageSize=" + this.pageSize)
+      const {data: res} = await this.$axios.get("/api/user/all")
       if (res.code != 1) {
         console.log(res);
         return this.$message.error("获取用户列表失败！");
       }
       console.log(res);
-      this.realData = res.data.records;
-      this.total = res.data.total;
-      this.pageSize = res.data.records.pages;
+      this.realData = res.data;
+      this.total = res.data.length;
+      // this.pageSize = res.data.;
     },
 
   },

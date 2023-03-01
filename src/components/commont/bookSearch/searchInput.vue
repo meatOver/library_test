@@ -43,7 +43,7 @@ export default {
       console.log(item);
     },
     async getUserList(){
-      const {data:res} =await this.$axios.get('users',{params:this.queryInfo})
+      const {data:res} =await this.$axios.get('/api/book/search?keyword',{params:this.queryInfo})
       console.log(res)
       if (res.meta.status !== 200) return this.$message.error('获取用户列表失败')
       this.userlist = res.data.users

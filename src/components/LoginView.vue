@@ -8,7 +8,7 @@
 </template>
 
 <script>
-
+//
 export default {
   name: "LoginView",
   data() {
@@ -22,19 +22,12 @@ export default {
   methods: {
     loginFun() {
       this.$axios({
-        url: '/api/user/login',
+        url: '/api/admin/login',
         method: 'post',
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        // params: {
-        //   "userId": "testadmin",
-        //   "userPassword": "testadmin"
-        // },
         dataType: 'json',
         data: {
-              "userId": this.user,
-              "userPassword": this.password
+              "username": this.user,
+              "password": this.password
             }
         ,
       }).then(res => {

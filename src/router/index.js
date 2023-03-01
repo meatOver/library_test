@@ -4,9 +4,7 @@ import HomeView from '../views/HomeView.vue'
 import HomePage from "@/components/home/HomePage";
 import bookCheckin from "@/components/commont/bookManagement/bookCheckin";
 import bookReturn from "@/components/commont/bookManagement/bookReturn";
-import homeIndex from "@/components/commont/home/homeIndex";
 import userSearch from "@/components/commont/User/userSearch";
-import addUser from "@/components/commont/User/addUser";
 
 Vue.use(VueRouter)
 
@@ -22,15 +20,15 @@ const routes = [
         name: 'homePage',
         component: HomePage,
         children: [
+            {  // 重定向页面
+                path: '/',
+                redirect: '/checkin',
+
+            },
             {
                 path: '/userSearch',
                 name: 'user',
                 component: userSearch
-            },
-            {
-                path: '/addUser',
-                name: 'addUser',
-                component: addUser
             },
             {
                 path: '/checkin',
@@ -44,11 +42,6 @@ const routes = [
                 component: bookReturn
             },
             {
-                path: '/record',
-                name: 'record',
-                component: () => import('../components/commont/bookManagement/bookRecord')//bookRecord
-            },
-            {
                 path: '/search',
                 name: 'search',
                 component: () => import('../components/commont/bookManagement/bookSearch')
@@ -58,11 +51,6 @@ const routes = [
                 path: '/online',
                 name: 'online',
                 component: () => import('../components/commont/bookUser/onlineUser')
-            },
-            {
-                path: '/outTime',
-                name: 'outTime',
-                component: () => import('../components/commont/bookUser/outTime')
             },
             {
                 path: '/logs',

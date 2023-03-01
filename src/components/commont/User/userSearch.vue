@@ -18,15 +18,17 @@
             width="180" prop="userType">
         </el-table-column>
         <el-table-column label="操作">
+          <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+          <el-button type="text" size="small">编辑</el-button>
           <template slot-scope="scope">
             <el-button
                 size="mini"
-                @click="dialogFormVisible = true">编辑
+                @click="handleClick(scope.row.userId)">编辑
             </el-button>
-            <el-dialog title="编辑" :visible.sync="dialogFormVisible">
+            <el-dialog title="编辑" :visible.sync="dialogFormVisible" v-model="scope.row.userId">
               <el-form>
                 <el-form-item label="账号" :label-width="formLabelWidth">
-                  <el-input v-model="scope.row.userId" autocomplete="off"></el-input>
+                  <el-input v-model="scope.row.userId"></el-input>
                 </el-form-item>
                 <el-form-item label="账号权限" :label-width="formLabelWidth">
                   <el-select v-model="scope.row.userType" placeholder="请选择权限">
@@ -73,7 +75,7 @@ export default {
   components: {
     searchInput
   },
-  inject:['reload'],
+  inject: ['reload'],
   data() {
     return {
       tableData: [],
@@ -104,6 +106,10 @@ export default {
       this.currentPage = newPage;//重新指定当前页
       this.getUsersList();//带着新的分页请求获取数据
     },
+    // 修改人员信息
+    handleClick(id) {
+      this.dialogFormVisible = true
+    },
     // 删除在线人员
     handleDelete(id) {
       this.$confirm('此操作将下线该用户, 是否继续?', '提示', {
@@ -112,12 +118,13 @@ export default {
         type: 'warning',
         center: true
       }).then(() => {
-        this.$axios.delete('api/user/' + id).then(result => {
+        this.$axios.delete('api/admin/get' + id).then(result => {
           this.$message({
             type: 'success',
             message: '删除成功!'
-          });this.reload()   // 删除数据后重新获取数据
-        } ).catch(() => {
+          });
+          this.reload()   // 删除数据后重新获取数据
+        }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'

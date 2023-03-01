@@ -61,7 +61,7 @@ export default {
   methods: {
 
     async getUsersList() {
-      const {data: res} = await this.$axios.get("/api/borrowed")
+      const {data: res} = await this.$axios.get("/api/borrowRecords/page")
       if (res.code != 1) {
         console.log(res);
         return this.$message.error("获取用户列表失败！");
